@@ -1,6 +1,6 @@
 # h5_sdk
 
-> no
+> SDK
 
 ## Build Setup
 
