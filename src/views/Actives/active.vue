@@ -6,16 +6,12 @@
           </div>
     </div>
     <div class="active-main" ref="active_main" >
-      <div class="cot" v-if='type'>
-        <cell-box title="cell" v-tap='{methods: check,index:item.id}'  v-for='item in data' :key="item.id">
-            {{item.post_title}}
-        </cell-box>
-      </div>
-      <div v-else>
-        <p style="text-align:center;margin-top:1.68rem">
-          <span style="vertical-align:middle;display:inline-block;font-size:14px;">加载中...&nbsp;&nbsp;</span>
-          <inline-loading></inline-loading>
-        </p>
+      <div class="cot" >
+        <group>
+          <cell-box title="cell" @click.native='check' is-link>
+            demo
+          </cell-box>
+        </group>
       </div>
     </div>
  </div>
@@ -39,33 +35,12 @@ export default {
   components: {
     InlineLoading
   },
-  mounted () {
-    setTimeout(() => {
-      this.scroll = new BScroll(this.$refs.active_main, options)
-      this.scroll.refresh()
-    }, 20)
-    if (sessionStorage.getItem('active')) {
-    // 消息接口数据
-        this.type = true;
-        this.data = JSON.parse(sessionStorage.getItem('active'))
-    }else{
-        ActivityMessage().then(res => {
-          this.type = true
-          if(res.code === 1){
-            this.data = res.data
-            sessionStorage.setItem('active', JSON.stringify(this.data))
-          }
-        })
-    }
+  mounted() {
+
   },
   methods: {
-    check (id) {
-      for (var i = 0; i < this.data.length; i++) {
-        if (this.data[i].id === id.index) {
-          sessionStorage.setItem('active', JSON.stringify(this.data[i]))
-        }
-      }
-      this.$router.push({path: '/activeDetails'})
+    check(){
+      this.$router.push({path:'/activeDetails'})
     }
   }
 }

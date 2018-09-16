@@ -20,6 +20,54 @@
     </div>
 </div>
 </template>
+<script>
+import Clipboard from 'clipboard'
+import $ from 'jquery'
+import BScroll from 'better-scroll'
+const options = {
+  scrollY: true
+}
+export default {
+  data () {
+    return {
+      data: 1,
+      showPositionValue: false,
+      toastText: ''
+    }
+  },
+  created () {
+    if(sessionStorage.bagData){
+      var check = JSON.parse(sessionStorage.getItem('bagData'))
+      this.data = check.filter((item)=>{
+        return item.code != ''
+      })
+    }
+  },
+  mounted () {
+    setTimeout(() => {
+      this.scroll = new BScroll(this.$refs.gift_main, options)
+      this.scroll.refresh()
+    }, 20)
+  },
+  methods: {
+    reverse () {
+      this.$router.go(-1)
+    },
+    copy () {
+      $('li').on('click', 'button', function () {
+        var clipboard = new Clipboard('.btn')
+        clipboard.on('success', e => {
+          // 释放内存
+          e.clearSelection()
+          clipboard.destroy()
+        })
+      })
+      this.toastText = '复制成功'
+      this.showPositionValue = true
+    }
+  }
+}
+</script>
 <style lang="scss">
 .weui-toast{
   left: 45%;
@@ -123,50 +171,3 @@ html{
   }
 }
 </style>
-<script>
-import Clipboard from 'clipboard'
-import $ from 'jquery'
-import BScroll from 'better-scroll'
-const options = {
-  scrollY: true
-}
-export default {
-  data () {
-    return {
-      data: 1,
-      showPositionValue: false,
-      toastText: ''
-    }
-  },
-  created () {
-    if(sessionStorage.getItem('deposit')){
-      this.data = JSON.parse(sessionStorage.getItem('deposit'))
-      var b = this.data[0].content.indexOf('\n')
-      this.data[0].content = this.data[0].content.substring(0, b)
-    }
-  },
-  mounted () {
-    setTimeout(() => {
-      this.scroll = new BScroll(this.$refs.gift_main, options)
-      this.scroll.refresh()
-    }, 20)
-  },
-  methods: {
-    reverse () {
-      this.$router.go(-1)
-    },
-    copy () {
-      $('li').on('click', 'button', function () {
-        var clipboard = new Clipboard('.btn')
-        clipboard.on('success', e => {
-          // 释放内存
-          e.clearSelection()
-          clipboard.destroy()
-        })
-      })
-      this.toastText = '复制成功'
-      this.showPositionValue = true
-    }
-  }
-}
-</script>

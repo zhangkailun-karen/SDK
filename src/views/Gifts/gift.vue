@@ -16,9 +16,9 @@
     </div>
     <div class="gift-main" ref="wrapper">
       <ul class="content">
-        <li v-if='data !=1' v-for='(item,index) in data'>
+        <li v-if='dataType !=1' v-for='(item,index) in data'>
           <p>{{item.title}}</p>
-          <p>{{item.content}}</p>
+          <p>礼包内容：{{item.content}}</p>
           <button v-if="data[index].code == ''" v-tap='{methods:details,index:item.id}'>领取</button>
           <button class='check' v-else @click='Submission'>已领取</button>
           <group>
@@ -39,7 +39,33 @@ const options = {
 export default {
   data () {
     return {
-      data: 1,
+      dataType:1,
+      data: [
+        {
+          id:1,
+          title:'礼包1',
+          content:'测试测试测试测试1',
+          code:'111SDFHSDKJFDLF'
+        },
+        {
+          id:2,
+          title:'礼包2',
+          content:'测试测试测试测试2',
+          code:''
+        },
+        {
+          id:3,
+          title:'礼包3',
+          content:'测试测试测试测试3',
+          code:''
+        },
+        {
+          id:4,
+          title:'礼包4',
+          content:'测试测试测试测试4',
+          code:''
+        }
+      ],
       startTime: '',
       endTime: '',
       showPositionValue: false,
@@ -51,49 +77,16 @@ export default {
     InlineLoading
   },
   mounted () {
-    // 礼包请求
-    var a = JSON.parse(localStorage.getItem('4CSDK-Login')).a
-    var b = JSON.parse(localStorage.getItem('4CSDK-Login')).b
-    console.log(a,b)
-    if (sessionStorage.getItem('gift')) {
-      this.data = JSON.parse(sessionStorage.getItem('gift'))
-      this.type = true
-      for (var i = 0; i < this.data.length; i++) {
-        if (this.data[i].content.length > 20) {
-          if (this.data[i].content.indexOf('\n') != -1) {
-            var num = this.data[i].content.indexOf('\n')
-            this.data[i].content = this.data[i].content.substring(0, num) + '....'
-          }
-        }
-      }
-    } else {
-      Gamebag().then(res => {
-        this.type = true
-        if(res.code === 1){
-          this.data = res.data
-          if(typeof this.data[0]=='undefined')return
-          // 数据存到localStorage
-          sessionStorage.setItem('gift', JSON.stringify(this.data))
-          for (var i = 0; i < this.data.length; i++) {
-            if (this.data[i].content.length > 20) {
-              if (this.data[i].content.indexOf('\n') != -1) {
-                var num = this.data[i].content.indexOf('\n')
-                this.data[i].content = this.data[i].content.substring(0, num) + '....'
-              }
-            }
-          }
-          // 存号箱数据
-          var data = this.data.filter((item) => {
-            return item.code != ''
-          })
-          sessionStorage.setItem('deposit', JSON.stringify(data))
-        }
-      })
+    if(sessionStorage.bagData){
+      this.data = JSON.parse(sessionStorage.getItem('bagData'))
     }
+    sessionStorage.setItem('bagData', JSON.stringify(this.data))
     setTimeout(() => {
+      this.dataType = 2
+      this.type = true
       this.scroll = new BScroll(this.$refs.wrapper, options)
       this.scroll.refresh()
-    }, 20)
+    }, 500)
   },
   methods: {
     details (e) {

@@ -23,20 +23,70 @@
         <p>使用说明</p>
         <p>进入游戏-主页上方-兑换礼包</p>
       </div>
-      <div class="dc-foot" v-if="type">
-        <button v-tap={methods:takePackage}>领取礼包</button>
-         <toast v-model="showPositionValue" type="text" :time="1000" :text="toastText"  position="center"></toast>
-      </div>
-      <div class="code" v-else>
-        <div class="gm-code">
-          <p id='foo'>激活码&nbsp;&nbsp;&nbsp;&nbsp;{{code}}</p >
-        </div>
-        <button v-tap='{methods:copy}' class='btn' :data-clipboard-text="code">复 制</button>
+      <div class="dc-foot">
+        <button v-tap="{methods:takePackage}" :disabled='type'>{{title}}</button>
          <toast v-model="showPositionValue" type="text" :time="1000" :text="toastText"  position="center"></toast>
       </div>
     </div>
   </div>
 </template>
+<script>
+// import axios from 'axios'
+import { TakeGameBag } from '@/api'
+import { XHeader, Toast } from 'vux'
+import $ from 'jquery'
+import axios from 'axios'
+import Clipboard from 'clipboard'
+export default {
+  data () {
+    return {
+      data: 1,
+      type: false, // 礼包状态
+      showPositionValue: false,
+      toastText: '',
+      width: '1rem',
+      code: '',
+      title:'领取礼包'
+    }
+  },
+  components: {
+    XHeader,
+    Toast
+  },
+  mounted () {
+    this.data = JSON.parse(sessionStorage.getItem('GameBagData'))
+    // 获取相应的数据
+    if(this.data.code != ''){
+      this.title ='已领取'
+      this.type = true
+      $('.dc-foot button').css('background','#aaa')
+    }
+  },
+  methods: {
+    takePackage () {
+      var gamedata = JSON.parse(sessionStorage.getItem('bagData'))
+      for(var i = 0 ; i < gamedata.length; i++){
+        if(gamedata[i].id == this.data.id){
+          gamedata[i].code = '1234234234234234'
+          this.data = gamedata[i]
+          sessionStorage.setItem('GameBagData', JSON.stringify(this.data))
+        }
+      }
+      sessionStorage.setItem('bagData', JSON.stringify(gamedata))
+      if(this.data.code != ''){
+        this.title ='已领取'
+        this.type = true
+        $('.dc-foot button').css('background','#aaa')
+      }
+      this.showPositionValue = true
+      this.toastText = '领取成功'
+      setTimeout(()=>{
+        this.$router.push({path:'/deposit'})
+      },1000)
+    },
+  }
+}
+</script>
 <style lang="scss">
 html {
   height: 100%;
@@ -186,63 +236,3 @@ html {
   }
 }
 </style>
-<script>
-// import axios from 'axios'
-import { TakeGameBag } from '@/api'
-import { XHeader, Toast } from 'vux'
-import $ from 'jquery'
-import axios from 'axios'
-import Clipboard from 'clipboard'
-export default {
-  data () {
-    return {
-      data: 1,
-      type: true, // 礼包状态
-      showPositionValue: false,
-      toastText: '',
-      width: '1rem',
-      code: ''
-    }
-  },
-  components: {
-    XHeader,
-    Toast
-  },
-  created () {
-    this.data = JSON.parse(sessionStorage.getItem('GameBagData'))
-    // 获取相应的数据
-  },
-  methods: {
-    takePackage () {
-      TakeGameBag(this.data).then(res => {
-        if (res.code == 1) {
-          this.type = false
-          this.code = res.data.code
-          var data = JSON.parse(sessionStorage.getItem('gift'))
-          for (var i = 0; i < data.length; i++) {
-            if (data[i].id == this.data.id) {
-              data[i].code = 1
-            }
-          }
-          sessionStorage.setItem('gift')
-        }
-        // this.type = false
-        this.toastText = res.msg
-        this.showPositionValue = true
-      })
-    },
-    copy () {
-      $('.code').on('click', 'button', function () {
-        var clipboard = new Clipboard('.btn')
-        clipboard.on('success', e => {
-          // 释放内存
-          e.clearSelection()
-          clipboard.destroy()
-        })
-      })
-      this.toastText = '复制成功'
-      this.showPositionValue = true
-    }
-  }
-}
-</script>

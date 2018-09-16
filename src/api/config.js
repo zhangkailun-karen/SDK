@@ -1,9 +1,9 @@
 import md5 from 'md5'
 import { Time } from './Time'
-import { CMD5 } from './CMD5.js'
+// import { CMD5 } from './CMD5.js'
 import Cookie from 'js-cookie'
-var game = new CMD5();
-game.getALL();
+// var game = new CMD5();
+// game.getALL();
 
 const f = function () {
   var msg = navigator.userAgent

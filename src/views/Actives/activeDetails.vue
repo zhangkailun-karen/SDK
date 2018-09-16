@@ -1,10 +1,10 @@
 <template>
  <div class="idCheck">
     <div class="payTil">
-      <x-header :title="data.post_title" header-title-color='#fff' :left-options="{backText: ''}"></x-header>
+      <x-header  header-title-color='#fff' :left-options="{backText: ''}">活动详情</x-header>
     </div>
-    <div class="checkCon">
-      <iframe src="http://www.baidu.com" ></iframe>
+    <div class="checkCon" id='iframe-box'>
+      <iframe id="ifram" src="https://www.baidu.com"></iframe>
     </div>
   </div>
 </template>
@@ -23,7 +23,17 @@ export default {
 
   },
   mounted () {
-    this.data = JSON.parse(sessionStorage.getItem('active'))
+    var ifram = document.getElementById('ifram')
+    if (navigator.userAgent.match(/iPad|iPhone/i)) {
+      var iframe_box = document.getElementById('iframe-box')
+      iframe_box.style.width = 100 + '%'
+      iframe_box.style.height = 12 +'rem'
+      iframe_box.style.overflowX = 'hidden'
+      iframe_box.style.overflowY = 'scroll'
+      iframe_box.style.webkitOverflowScrolling = 'touch'
+      // ifram.setAttribute('scrolling', 'no')
+      // iframe_box.appendChild(ifram)
+    }
   },
   methods: {
 
@@ -33,8 +43,13 @@ export default {
 </script>
 
 <style lang="scss">
+#ifram{
+    border: 0;
+    width: 100%;
+    height:100%;
+  }
 .idCheck{
-  width: 90%;
+  width: 100%;
   .payTil {
     border-bottom: 1px solid #efefef;
     width: 90%;
@@ -67,12 +82,8 @@ export default {
   }
   .checkCon {
     width: 100%;
+    height: 5.6rem;
     margin-top:0.6rem;
-    iframe{
-      border:none;
-      width: 116%;
-      height: 5.5rem;
-    }
   }
 }
 </style>
